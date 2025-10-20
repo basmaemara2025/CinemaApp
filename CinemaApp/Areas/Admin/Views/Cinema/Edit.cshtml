@@ -1,0 +1,52 @@
+﻿@model CinemaApp.Models.Cinema
+@{
+    ViewData["Title"] = "Edit Cinema";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 100px);">
+    <div class="row justify-content-center w-100">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-body p-4">
+                    <h3 class="card-title mb-4 text-center text-primary">
+                        <i class="bi bi-tags-fill"></i> Edit Cinema
+                    </h3>
+
+
+                    <form asp-action="Edit" asp-controller="Cinema" method="post" novalidate>
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <!-- Cinema Name -->
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-semibold">Cinema Name</label>
+                            <input asp-for="Name" class="form-control" value="@Model.Name" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" asp-for="Location">Cinema Location</label>
+                            <input asp-for="Location" class="form-control" id="Location" value="@Model.Location" />
+                            
+                        </div>
+
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-check-circle"></i> Save
+                            </button>
+                            <a asp-action="Index" asp-controller="Cinema" class="btn btn-outline-secondary px-4">
+                                <i class="bi bi-arrow-left"></i> Back
+                            </a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

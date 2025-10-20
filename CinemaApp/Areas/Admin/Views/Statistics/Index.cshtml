@@ -1,0 +1,83 @@
+﻿@{
+	ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid mt-4">
+
+	<!-- بطاقات الإحصائيات -->
+	<div class="row g-3 mb-4">
+		<div class="col-md-3">
+			<div class="card bg-primary text-white text-center shadow">
+				<div class="card-body">
+					<h3>@ViewBag.CinemaCount</h3>
+					<p class="mb-0">Cinemas</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-3">
+			<div class="card bg-success text-white text-center shadow">
+				<div class="card-body">
+					<h3>@ViewBag.MovieCount</h3>
+					<p class="mb-0">Movies</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-3">
+			<div class="card bg-warning text-white text-center shadow">
+				<div class="card-body">
+					<h3>@ViewBag.ActorCount</h3>
+					<p class="mb-0">Actors</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-3">
+			<div class="card bg-danger text-white text-center shadow">
+				<div class="card-body">
+					<h3>@ViewBag.CategoryCount</h3>
+					<p class="mb-0">Categories</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- الرسم البياني -->
+	<div class="card shadow mb-4">
+		<div class="card-header bg-light">
+			<h5 class="mb-0">عدد الأفلام في كل سينما</h5>
+		</div>
+		<div class="card-body">
+			<canvas id="cinemaChart" height="120"></canvas>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+	<script>
+		const ctx = document.getElementById('cinemaChart');
+		new Chart(ctx, {
+		type: 'bar',
+		data: {
+		labels: [@Html.Raw(ViewBag.ChartLabels)],
+		datasets: [{
+		label: 'Movies per Cinema',
+		data: [@Html.Raw(ViewBag.ChartValues)],
+		borderWidth: 1,
+		backgroundColor: '#5a8dee'
+		}]
+		},
+		options: {
+		scales: {
+		y: {
+		beginAtZero: true,
+		ticks: { stepSize: 1 }
+		}
+		}
+		}
+		});
+	</script>
+}

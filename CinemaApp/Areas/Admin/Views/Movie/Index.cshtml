@@ -1,0 +1,145 @@
+﻿@model IEnumerable<CinemaApp.Models.Movie>
+
+<div class="container py-4">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h3 class="fw-bold text-primary">All Movies</h3>
+        </div>
+        <div class="col-md-6 text-md-end text-start mt-2 mt-md-0">
+            <a asp-area="Admin" asp-controller="Movie" asp-action="Create" class="btn btn-success">
+                + Add New Movie
+            </a>
+        </div>
+    </div>
+
+    <div class="table-responsive shadow-sm rounded-3">
+        <table class="table align-middle text-center table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Main Image</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th>Cinema</th>
+                    <th>Status</th>
+                    <th>Release Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var movie in Model)
+                {
+                    <tr>
+                        <td>@movie.Id</td>
+                        <td class="fw-semibold">@movie.Title</td>
+
+                       
+                        <td>
+                            @if (!string.IsNullOrEmpty(movie.MainImage))
+                            {
+                                <img src="@movie.MainImage"
+                                     alt="@movie.Title"
+                                     width="80" height="80"
+                                     class="rounded shadow-sm border" />
+                            }
+                            else
+                            {
+                                <span class="text-muted fst-italic">No Image</span>
+                            }
+
+                            @* 
+                            <!-- 💤 Sub Images (disabled for now) -->
+                            @if (movie.MovieSubImages != null && movie.MovieSubImages.Any())
+                            {
+                                <div class="d-flex flex-wrap justify-content-center gap-1 mt-2">
+                                    @foreach (var sub in movie.MovieSubImages)
+                                    {
+                                        <img src="@sub.ImageUrl"
+                                             alt="Sub image for @movie.Title"
+                                             width="50" height="50"
+                                             class="rounded shadow-sm border border-light" />
+                                    }
+                                </div>
+                            }
+                            *@
+                        </td>
+
+                        <td>@movie.Price.ToString("F2") ج.م</td>
+                        <td>@movie.Category?.Name</td>
+                        <td>@movie.Cinema?.Name</td>
+
+                        <td>
+                            @if (movie.IsTopMovie)
+                            {
+                                <span class="badge bg-success">Top Movie</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Normal</span>
+                            }
+                        </td>
+
+                        <td>@movie.ReleaseDate.ToShortDateString()</td>
+
+                        
+                        <td class="text-end">
+                            <div class="btn-group" role="group">
+                                <a asp-area="Admin" asp-controller="Movie" asp-action="Edit" asp-route-id="@movie.Id"
+                                   class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="@movie.Id">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                               
+
+                                @* <a asp-area="Admin" asp-controller="Movie" asp-action="Delete" asp-route-id="@movie.Id"
+                                   class="btn btn-danger btn-sm btn-delete">
+                                    <i class="bi bi-trash"></i>
+                                </a> *@
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll(".btn-delete");
+
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", function (e) {
+                e.preventDefault();
+                const movieId = this.getAttribute("data-id");
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "This movie will be permanently deleted!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/Admin/Movie/Delete/${movieId}`, { method: "POST" })
+                            .then(res => {
+                                if (res.ok) {
+                                    Swal.fire("Deleted!", "The movie has been deleted.", "success")
+                                        .then(() => window.location.href = "/Admin/Movie/Index");
+                                }
+                            });
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+@section Scripts {
+    <partial name="_NotificationPartial" />
+}

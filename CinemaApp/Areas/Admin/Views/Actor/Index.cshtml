@@ -1,0 +1,109 @@
+﻿@model IEnumerable<Actor>
+<div class="container">
+	<div class="row">
+		<div class="col-6">All actors</div>
+		<div class="col-6 text-md-end text-start mt-2 mt-md-0">
+			<a asp-area="Admin" asp-controller="Actor" asp-action="Create" class="btn btn-success">
+				+ Create Actor
+			</a>
+		</div>
+	</div>
+ 
+<div class="table-responsive scrollbar">
+	
+	
+	<table class="table">
+		<thead>
+			<tr>
+				<th scope="col">Id</th>
+				<th scope="col">Name</th>
+				<th scope="col">Actor Image</th>
+
+				<th class="text-end" scope="col">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+
+				<tr>
+					<td>@item.Id</td>
+					<td>@item.FullName</td>
+						@if (!string.IsNullOrEmpty(item.ActorImage))
+						{
+							<td>
+								<img src="~/Admin/assets/ActorImages/@item.ActorImage"
+									 alt="@item.FullName" width="60" height="60" class="rounded-circle" />
+							</td>
+						}
+						else
+						{
+							<td>
+								<img src="~/Admin/assets/ActorImages/default.png"
+									 alt="No Image" width="60" height="60" class="rounded-circle" />
+							</td>
+						}
+
+
+
+					<td class="text-end">
+						<div>
+								<a href="/Admin/Actor/Edit/@item.Id" type="button" class="btn">
+									<i class="bi bi-pencil"></i> 
+								</a>
+								<a href="/Admin/Actor/Delete/@item.Id" type="button" class="btn btn-delete">
+									<i class="bi bi-trash"></i> 
+								</a>
+						</div>
+					</td>
+				</tr>
+			}
+
+
+		</tbody>
+	</table>
+</div>
+
+</div>
+
+   
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		const deleteButtons = document.querySelectorAll(".btn-delete");
+
+		deleteButtons.forEach(button => {
+			button.addEventListener("click", function (e) {
+				e.preventDefault(); // stop normal navigation
+
+				const url = this.getAttribute("href");
+
+				Swal.fire({
+					title: "Are you sure?",
+					text: "This action cannot be undone!",
+					icon: "warning",
+					showCancelButton: true,
+					confirmButtonColor: "#d33",
+					cancelButtonColor: "#3085d6",
+					confirmButtonText: "Yes, delete it!"
+				}).then((result) => {
+					if (result.isConfirmed) {
+						Swal.fire({
+						  title: "Deleted!",
+						  text: "Your file has been deleted.",
+						  icon: "success"
+						});
+
+						// Redirect to delete URL
+						window.location.href = url;
+					}
+				});
+			});
+		});
+	});
+</script>
+@* ================================================================= *@
+@section Scripts {
+
+	<partial name="_NotificationPartial">
+
+}
