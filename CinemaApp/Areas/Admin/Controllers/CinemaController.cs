@@ -9,7 +9,13 @@ namespace CinemaApp.Areas.Admin.Controllers
     public class CinemaController : Controller
     
     {
-        ApplicationDbContext _DbContext = new();
+        ApplicationDbContext _DbContext;
+        public CinemaController(ApplicationDbContext dbcontext)
+        {
+            _DbContext = dbcontext;
+        }
+
+        
         public IActionResult Index()
         {
             var cinemas = _DbContext.Cinemas.AsNoTracking().AsQueryable();

@@ -1,3 +1,8 @@
+using CinemaApp.Data;
+using CinemaApp.Repositories;
+using ECommerce.Repositories.IRepositories;
+using Microsoft.EntityFrameworkCore;
+
 namespace CinemaApp
 {
     public class Program
@@ -8,6 +13,10 @@ namespace CinemaApp
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             var app = builder.Build();
 

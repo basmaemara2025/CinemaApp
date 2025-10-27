@@ -5,6 +5,10 @@ namespace CinemaApp.Data
 {
     public class ApplicationDbContext: DbContext
     {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
+        {
+        }
         public DbSet<Actor> Actors { get; set; }
         public DbSet<Cinema> Cinemas { get; set; }
         public DbSet<Movie> Movies { get; set; }
@@ -13,13 +17,7 @@ namespace CinemaApp.Data
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=.;Database=CinemaAppDb;Trusted_Connection=True;TrustServerCertificate=True;");
-            }
-        }
+       
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

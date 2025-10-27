@@ -7,7 +7,12 @@ namespace CinemaApp.Areas.Admin.Controllers
     [Area("Admin")]
     public class StatisticsController : Controller
     {
-        ApplicationDbContext _DbContext = new();
+        ApplicationDbContext _DbContext;
+        public StatisticsController(ApplicationDbContext dbcontext)
+        {
+            _DbContext = dbcontext;
+        }
+
         public IActionResult Index()
         {
             ViewBag.CinemaCount = _DbContext.Cinemas.Count();

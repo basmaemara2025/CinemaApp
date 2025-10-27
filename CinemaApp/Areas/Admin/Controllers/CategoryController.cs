@@ -8,7 +8,12 @@ namespace CinemaApp.Areas.Admin.Controllers
     [Area("Admin")]
     public class CategoryController : Controller
     {
-        ApplicationDbContext _DbContext = new();
+        ApplicationDbContext _DbContext;
+        public CategoryController(ApplicationDbContext dbcontext)
+        {
+            _DbContext = dbcontext;
+        }
+
         public IActionResult Index()
         {
             var categories = _DbContext.Categories.AsNoTracking().AsQueryable();

@@ -1,36 +1,55 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CinemaApp.Data;
-using CinemaApp.Models;
+﻿using CinemaApp.Models;
+using CinemaApp.Repositories;
+using ECommerce.Repositories.IRepositories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+
 namespace CinemaApp.Areas.Customer.Controllers
 {
     [Area("Customer")]
     public class HomeController : Controller
     {
-        private ApplicationDbContext _Dbcontext = new();
+        private readonly IRepository<Movie> _movieRepo;
+        private readonly IRepository<Category> _categoryRepo;
 
-        public IActionResult Index(int? category, string moviename, int page = 1)
+        public HomeController(IRepository<Movie> movieRepo, IRepository<Category> categoryRepo)
         {
-            var movies = _Dbcontext.Movies.Include(s => s.Category).AsQueryable();
-            var totalpages = Math.Ceiling(movies.Count() / 3.0);
-            ViewBag.Totalpages = totalpages;
-            movies = movies.Skip((page - 1) * 3).Take(3);
+            _movieRepo = movieRepo;
+            _categoryRepo = categoryRepo;
+        }
 
-            var categories = _Dbcontext.Categories;
-            ViewBag.categories = categories.AsEnumerable();
+        public async Task<IActionResult> Index(int? category, string? moviename, int page = 1)
+        {
+            // bring all movies with their categories
+            var movies = await _movieRepo.GetAsync(
+                includes: new Expression<Func<Movie, object>>[] { m => m.Category },
+                tracked: false
+            );
+
+            // filtering
             if (category is not null)
-            {
-                movies = _Dbcontext.Movies.Where(m=> m.CategoryId == category);
-            }
-            if (moviename is not null)
-            {
-                movies = _Dbcontext.Movies.Where(m=> m.Title.Contains(moviename));
-            }
-            ViewBag.MovieName = moviename;
-            ViewBag.category = category;
-            ViewBag.currentpage = page;
+                movies = movies.Where(m => m.CategoryId == category);
 
-            return View( movies.ToList());
+            if (!string.IsNullOrWhiteSpace(moviename))
+                movies = movies.Where(m => m.Title.Contains(moviename));
+
+            // pagination
+            int pageSize = 3;
+            var totalPages = Math.Ceiling(movies.Count() / (double)pageSize);
+            var pagedMovies = movies.Skip((page - 1) * pageSize).Take(pageSize);
+
+            // categories list
+            var categories = await _categoryRepo.GetAsync();
+
+            // ViewBag
+            ViewBag.TotalPages = totalPages;
+            ViewBag.Categories = categories;
+            ViewBag.MovieName = moviename;
+            ViewBag.Category = category;
+            ViewBag.CurrentPage = page;
+
+            return View(pagedMovies.ToList());
         }
     }
 }

@@ -8,7 +8,12 @@ namespace CinemaApp.Areas.Admin.Controllers
     [Area("Admin")]
     public class ActorController : Controller
     {
-        ApplicationDbContext _DbContext = new();
+        ApplicationDbContext _DbContext;
+        public ActorController(ApplicationDbContext dbcontext)
+        {
+            _DbContext = dbcontext;
+        }
+
         public IActionResult Index()
         {
             var actors = _DbContext.Actors.AsNoTracking().AsQueryable();

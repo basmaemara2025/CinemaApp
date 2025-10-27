@@ -10,7 +10,13 @@ namespace CinemaApp.Controllers
     [Area("Admin")]
     public class MovieController : Controller
     {
-         ApplicationDbContext _DbContext=new();
+
+        ApplicationDbContext _DbContext;
+        public MovieController(ApplicationDbContext dbcontext)
+        {
+            _DbContext = dbcontext;
+        }
+
 
 
 
