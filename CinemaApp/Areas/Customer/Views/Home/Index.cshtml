@@ -1,0 +1,77 @@
+﻿@model List<CinemaApp.Models.Movie>
+
+<h1>Book  Movie</h1>
+<form asp-area="Customer" asp-controller="Home" asp-action="Index" method="POST">
+    <div class="row align-items-end">
+        <div class="col-md-4 mb-4">
+            <label for="category" class="form-label">Select Movie Category:</label>
+            <select class="form-select" id="category" name="category">
+                <option selected disabled>Choose a Category</option>
+                @foreach (var item in ViewBag.categories)
+                {
+                    @if (@item.Id == ViewBag.category)
+                    {
+                        <option value="@item.Id" selected>@item.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <label for="moviename" class="form-label">Movie Name</label>
+            <input type="text"
+                   class="form-control"
+                   id="moviename"
+                   name="moviename"
+                   placeholder="@(!string.IsNullOrEmpty(ViewBag.MovieName) ? ViewBag.MovieName : "Enter Movie name")">
+        </div>
+
+        <div class="col-md-4 mb-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary" style="height: fit-content;">Filter</button>
+        </div>
+    </div>
+</form>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="@item.MainImage" class="card-img-top" style="height:250px; object-fit:cover;" alt="Doctor Image">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Title</h5>
+                    <p class="card-text">Category: @item.Category?.Name</p>
+                    <a asp-controller="Home"
+                       asp-action="CompleteAppointment"
+                       asp-route-Id="@item.Id"
+                       class="btn btn-primary">
+                        Book Movie
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<div class="row">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="?page=@(ViewBag.currentpage - 1)" tabindex="-1">Previous</a>
+            </li>
+            @for (var i = 1; i <= ViewBag.Totalpages; i++)
+            {
+                <li class="page-item"><a class="page-link" href="?page=@i">@i</a></li>
+            }
+
+            <li class="page-item  @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="?page=@(ViewBag.currentpage + 1)">Next</a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
