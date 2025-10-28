@@ -3,7 +3,6 @@ using CinemaApp.Repositories;
 using ECommerce.Repositories.IRepositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace CinemaApp.Areas.Customer.Controllers
 {
@@ -23,7 +22,7 @@ namespace CinemaApp.Areas.Customer.Controllers
         {
             // bring all movies with their categories
             var movies = await _movieRepo.GetAsync(
-                includes: new Expression<Func<Movie, object>>[] { m => m.Category },
+                includes: [e => e.Category],
                 tracked: false
             );
 
@@ -36,8 +35,13 @@ namespace CinemaApp.Areas.Customer.Controllers
 
             // pagination
             int pageSize = 3;
-            var totalPages = Math.Ceiling(movies.Count() / (double)pageSize);
-            var pagedMovies = movies.Skip((page - 1) * pageSize).Take(pageSize);
+            int totalCount = movies.Count();
+            double totalPages = Math.Ceiling(totalCount / (double)pageSize);
+
+            var pagedMovies = movies
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
             // categories list
             var categories = await _categoryRepo.GetAsync();
@@ -49,7 +53,8 @@ namespace CinemaApp.Areas.Customer.Controllers
             ViewBag.Category = category;
             ViewBag.CurrentPage = page;
 
-            return View(pagedMovies.ToList());
+            return View(pagedMovies);
         }
     }
 }
+

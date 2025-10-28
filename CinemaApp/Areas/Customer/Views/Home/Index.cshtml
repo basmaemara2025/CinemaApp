@@ -1,15 +1,16 @@
 ﻿@model List<CinemaApp.Models.Movie>
 
-<h1>Book  Movie</h1>
-<form asp-area="Customer" asp-controller="Home" asp-action="Index" method="POST">
+<h1>Book Movie</h1>
+
+<form asp-area="Customer" asp-controller="Home" asp-action="Index" method="get">
     <div class="row align-items-end">
         <div class="col-md-4 mb-4">
             <label for="category" class="form-label">Select Movie Category:</label>
             <select class="form-select" id="category" name="category">
-                <option selected disabled>Choose a Category</option>
-                @foreach (var item in ViewBag.categories)
+                <option value="">All Categories</option>
+                @foreach (var item in ViewBag.Categories)
                 {
-                    @if (@item.Id == ViewBag.category)
+                    @if (@item.Id == ViewBag.Category)
                     {
                         <option value="@item.Id" selected>@item.Name</option>
                     }
@@ -17,6 +18,7 @@
                     {
                         <option value="@item.Id">@item.Name</option>
                     }
+                   
                 }
             </select>
         </div>
@@ -27,7 +29,8 @@
                    class="form-control"
                    id="moviename"
                    name="moviename"
-                   placeholder="@(!string.IsNullOrEmpty(ViewBag.MovieName) ? ViewBag.MovieName : "Enter Movie name")">
+                   value="@ViewBag.MovieName"
+                   placeholder="Enter Movie name" />
         </div>
 
         <div class="col-md-4 mb-4 d-flex align-items-end">
@@ -41,35 +44,35 @@
     {
         <div class="col-md-4 mb-4">
             <div class="card">
-                <img src="@item.MainImage" class="card-img-top" style="height:250px; object-fit:cover;" alt="Doctor Image">
+                <img src="@item.MainImage" class="card-img-top" style="height:250px; object-fit:cover;" alt="@item.Title">
                 <div class="card-body">
                     <h5 class="card-title">@item.Title</h5>
                     <p class="card-text">Category: @item.Category?.Name</p>
                     <a asp-controller="Home"
                        asp-action="CompleteAppointment"
-                       asp-route-Id="@item.Id"
+                       asp-route-id="@item.Id"
                        class="btn btn-primary">
                         Book Movie
                     </a>
-
                 </div>
             </div>
         </div>
     }
 </div>
+
 <div class="row">
     <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
             <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
-                <a class="page-link" href="?page=@(ViewBag.currentpage - 1)" tabindex="-1">Previous</a>
+                <a class="page-link" href="?page=@(ViewBag.CurrentPage - 1)&category=@ViewBag.Category" tabindex="-1">Previous</a>
             </li>
-            @for (var i = 1; i <= ViewBag.Totalpages; i++)
+            @for (var i = 1; i <= ViewBag.TotalPages; i++)
             {
-                <li class="page-item"><a class="page-link" href="?page=@i">@i</a></li>
+                <li class="page-item"><a class="page-link" href="?page=@i&category=@ViewBag.Category">@i</a></li>
             }
 
             <li class="page-item  @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
-                <a class="page-link" href="?page=@(ViewBag.currentpage + 1)">Next</a>
+                <a class="page-link" href="?page=@(ViewBag.CurrentPage + 1)&category=@ViewBag.Category">Next</a>
             </li>
         </ul>
     </nav>
